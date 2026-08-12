@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <!-- CSS-generated artwork keeps the MVP lightweight until real campaign photography is available. -->
+  <!-- Lightweight CSS artwork stands in for campaign photography in the MVP. -->
   <div class="heroVisual">
     <div class="sun"></div>
     <div class="road"></div>
@@ -32,7 +32,7 @@
   </div>
 </section>
 
-<!-- Recently listed cars. The backend limits this collection for homepage performance. -->
+<!-- Recent active listings provide a fast path into marketplace discovery. -->
 <section class="wrap">
   <div class="sectionHead">
     <div>
@@ -47,7 +47,10 @@
       <a class="card" href="{{ url_for('car_detail', cid=car.id) }}">
         <div class="media">
           {% if car.image %}
-            <img src="{{ url_for('uploads', name=car.image) }}" alt="{{ car.year }} {{ car.make }} {{ car.model }}">
+            <img
+              src="{{ url_for('uploads', name=car.image) }}"
+              alt="{{ car.year }} {{ car.make }} {{ car.model }}"
+            >
           {% else %}
             <div class="placeholder">{{ car.make[0] }}{{ car.model[0] }}</div>
           {% endif %}
@@ -63,38 +66,22 @@
   </div>
 </section>
 
-<!-- Simple explanation of the marketplace lifecycle for first-time visitors. -->
+<!-- Explain the marketplace lifecycle to first-time visitors. -->
 <section class="darkBand">
   <div class="wrap">
     <p class="eyebrow">HOW IT WORKS</p>
     <h2>From discovery to shoot in four steps.</h2>
 
     <div class="steps">
-      <article>
-        <b>01</b>
-        <h3>Discover</h3>
-        <p>Browse cars or photographers that fit your idea.</p>
-      </article>
-      <article>
-        <b>02</b>
-        <h3>Request</h3>
-        <p>Send a shoot request or apply to an open job.</p>
-      </article>
-      <article>
-        <b>03</b>
-        <h3>Create</h3>
-        <p>Coordinate the shoot and make something worth sharing.</p>
-      </article>
-      <article>
-        <b>04</b>
-        <h3>Build rep</h3>
-        <p>Reviews and completed shoots improve your PhotoWhips score.</p>
-      </article>
+      <article><b>01</b><h3>Discover</h3><p>Browse cars or photographers that fit your idea.</p></article>
+      <article><b>02</b><h3>Request</h3><p>Send a shoot request or apply to an open job.</p></article>
+      <article><b>03</b><h3>Create</h3><p>Coordinate the shoot and make something worth sharing.</p></article>
+      <article><b>04</b><h3>Build rep</h3><p>Reviews and completed shoots improve your PhotoWhips score.</p></article>
     </div>
   </div>
 </section>
 
-<!-- Featured photographers give owners a second discovery path besides browsing cars. -->
+<!-- Featured photographers give owners another discovery path. -->
 <section class="wrap">
   <div class="sectionHead">
     <div>
@@ -107,7 +94,8 @@
   <div class="peopleGrid">
     {% for user in photographers %}
       <a class="person" href="{{ url_for('profile', uid=user.id) }}">
-        <div class="avatar">{{ ''.join(part[0] for part in user.name.split()[:2]) }}</div>
+        <!-- Jinja does not support Python generator expressions; a simple initial is safe here. -->
+        <div class="avatar">{{ user.name[0] }}</div>
         <div>
           <h3>{{ user.name }}</h3>
           <p>{{ user.city }} · {{ user.specialties or 'Photographer' }}</p>
