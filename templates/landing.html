@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{# Centralized copy keeps these small MVP marketing pages on one reusable template. #}
+{% set copy = {
+  'photographers': (
+    'FOR PHOTOGRAPHERS',
+    'Get access to cars worth shooting.',
+    'Build your portfolio, find paid opportunities and build a reputation through completed collaborations.'
+  ),
+  'owners': (
+    'FOR CAR OWNERS',
+    'Put your car in front of creators.',
+    'List your car, receive shoot requests, post photography jobs and choose who you want to work with.'
+  ),
+  'movie': (
+    'MOVIE SHOOTS',
+    'Cars that belong on screen.',
+    'Source distinctive vehicles for film, commercials, music videos and production work without digging through random listings.'
+  ),
+  'style': (
+    'STYLE SHOOTS',
+    'Cars for campaigns and editorial.',
+    'Find cars for fashion, lifestyle, brand and editorial productions with owners open to creative work.'
+  ),
+  'pricing': (
+    'SIMPLE PRICING',
+    'Start free. Pay when you need more.',
+    'The MVP is free to browse and join. Featured listings and production plans can be introduced as the marketplace grows.'
+  ),
+  'contact': (
+    'CONTACT',
+    'Talk to PhotoWhips.',
+    'Questions, partnerships or production requests? Send a message and we’ll get back to you.'
+  )
+} %}
+{% set page = copy[kind] %}
+
+<section class="pageHero landing">
+  <p class="eyebrow">{{ page[0] }}</p>
+  <h1>{{ page[1] }}</h1>
+  <p class="lede">{{ page[2] }}</p>
+
+  {% if kind in ['owners', 'photographers'] %}
+    <a class="btn acid" href="{{ url_for('signup') }}">Create your profile</a>
+  {% endif %}
+</section>
+
+{% if kind == 'pricing' %}
+  <section class="wrap pricing">
+    <article>
+      <span>COMMUNITY</span>
+      <h2>Free</h2>
+      <p>Browse, create a profile, list a car or portfolio and start connecting.</p>
+      <b>Available now</b>
+    </article>
+    <article>
+      <span>PRO · LATER</span>
+      <h2>Coming soon</h2>
+      <p>Featured placement, advanced tools and higher visibility once the community grows.</p>
+      <b>No payment required in MVP</b>
+    </article>
+  </section>
+{% elif kind == 'contact' %}
+  <section class="wrap narrow">
+    <form class="form dashPanel" method="post" action="{{ url_for('contact_submit') }}">
+      <input name="name" placeholder="Name" required>
+      <input name="email" type="email" placeholder="Email" required>
+      <textarea name="message" placeholder="How can we help?" required></textarea>
+      <button class="btn acid" type="submit">Send message</button>
+    </form>
+  </section>
+{% else %}
+  <section class="wrap featureStrip">
+    <article><b>01</b><h3>Discover</h3><p>Search a focused community instead of generic classifieds.</p></article>
+    <article><b>02</b><h3>Connect</h3><p>Profiles, portfolios and reputation make it easier to choose.</p></article>
+    <article><b>03</b><h3>Create</h3><p>Turn the connection into an actual production.</p></article>
+  </section>
+{% endif %}
+{% endblock %}

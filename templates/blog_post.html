@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} · PhotoWhips{% endblock %}
+
+{% block content %}
+<article class="article">
+  <p class="eyebrow">PHOTOWHIPS JOURNAL</p>
+  <h1>{{ post.title }}</h1>
+  <p class="lede">{{ post.excerpt }}</p>
+
+  <!-- White-space preservation allows the simple MVP admin editor to use paragraphs. -->
+  <div class="articleBody">{{ post.body }}</div>
+</article>
+{% endblock %}

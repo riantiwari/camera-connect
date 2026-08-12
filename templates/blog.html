@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog · PhotoWhips{% endblock %}
+
+{% block content %}
+<section class="pageHero">
+  <p class="eyebrow">FROM PHOTOWHIPS</p>
+  <h1>Stories, shoots & car culture.</h1>
+</section>
+
+<section class="wrap blogGrid">
+  {% for post in posts %}
+    <a class="blogCard" href="{{ url_for('blog_post', slug=post.slug) }}">
+      <span>PHOTOWHIPS JOURNAL</span>
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.excerpt }}</p>
+      <b>Read story →</b>
+    </a>
+  {% else %}
+    <div class="empty">No posts yet.</div>
+  {% endfor %}
+</section>
+{% endblock %}

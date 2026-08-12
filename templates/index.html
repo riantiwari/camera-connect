@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Primary landing section: introduces both sides of the PhotoWhips marketplace. -->
+<section class="hero">
+  <div>
+    <p class="eyebrow">CAR PEOPLE × PHOTOGRAPHERS</p>
+    <h1>
+      The right car.<br>
+      The right shooter.<br>
+      <em>One place.</em>
+    </h1>
+    <p class="lede">
+      Discover cars available for shoots, find photographers who understand car culture,
+      post jobs, collaborate, and build a reputation through real work.
+    </p>
+    <div class="actions">
+      <a class="btn acid" href="{{ url_for('cars') }}">Explore cars</a>
+      <a class="btn" href="{{ url_for('jobs') }}">Find jobs</a>
+    </div>
+  </div>
+
+  <!-- Lightweight CSS artwork stands in for campaign photography in the MVP. -->
+  <div class="heroVisual">
+    <div class="sun"></div>
+    <div class="road"></div>
+    <div class="carShape"></div>
+    <div class="floatCard">
+      <b>4.9 ★</b>
+      <span>Top creators near you</span>
+    </div>
+  </div>
+</section>
+
+<!-- Recent active listings provide a fast path into marketplace discovery. -->
+<section class="wrap">
+  <div class="sectionHead">
+    <div>
+      <p class="eyebrow">DISCOVER</p>
+      <h2>Cars ready to create.</h2>
+    </div>
+    <a href="{{ url_for('cars') }}">View all →</a>
+  </div>
+
+  <div class="grid">
+    {% for car in cars %}
+      <a class="card" href="{{ url_for('car_detail', cid=car.id) }}">
+        <div class="media">
+          {% if car.image %}
+            <img
+              src="{{ url_for('uploads', name=car.image) }}"
+              alt="{{ car.year }} {{ car.make }} {{ car.model }}"
+            >
+          {% else %}
+            <div class="placeholder">{{ car.make[0] }}{{ car.model[0] }}</div>
+          {% endif %}
+        </div>
+        <div class="cardBody">
+          <span class="tag">{{ car.city }}</span>
+          <h3>{{ car.year }} {{ car.make }} {{ car.model }}</h3>
+          <p>{{ car.shoot_types }}</p>
+          <b>${{ car.price }}/hr</b>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Explain the marketplace lifecycle to first-time visitors. -->
+<section class="darkBand">
+  <div class="wrap">
+    <p class="eyebrow">HOW IT WORKS</p>
+    <h2>From discovery to shoot in four steps.</h2>
+
+    <div class="steps">
+      <article><b>01</b><h3>Discover</h3><p>Browse cars or photographers that fit your idea.</p></article>
+      <article><b>02</b><h3>Request</h3><p>Send a shoot request or apply to an open job.</p></article>
+      <article><b>03</b><h3>Create</h3><p>Coordinate the shoot and make something worth sharing.</p></article>
+      <article><b>04</b><h3>Build rep</h3><p>Reviews and completed shoots improve your PhotoWhips score.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- Featured photographers give owners another discovery path. -->
+<section class="wrap">
+  <div class="sectionHead">
+    <div>
+      <p class="eyebrow">CREATORS</p>
+      <h2>Photographers in the community.</h2>
+    </div>
+    <a href="{{ url_for('photographers') }}">View all →</a>
+  </div>
+
+  <div class="peopleGrid">
+    {% for user in photographers %}
+      <a class="person" href="{{ url_for('profile', uid=user.id) }}">
+        <!-- Jinja does not support Python generator expressions; a simple initial is safe here. -->
+        <div class="avatar">{{ user.name[0] }}</div>
+        <div>
+          <h3>{{ user.name }}</h3>
+          <p>{{ user.city }} · {{ user.specialties or 'Photographer' }}</p>
+          <b>Score {{ score(user.id)[0] }}</b>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

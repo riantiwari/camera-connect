@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Find Cars · PhotoWhips{% endblock %}
+
+{% block content %}
+<section class="pageHero">
+  <p class="eyebrow">DISCOVER</p>
+  <h1>Find cars for your next shoot.</h1>
+
+  <!-- GET parameters keep searches shareable and easy to debug. -->
+  <form class="searchbar" method="get">
+    <input name="q" placeholder="Porsche, Supra, Mustang…" value="{{ request.args.get('q', '') }}">
+    <input name="city" placeholder="City" value="{{ request.args.get('city', '') }}">
+    <button class="btn acid" type="submit">Search</button>
+  </form>
+</section>
+
+<section class="wrap">
+  <div class="grid">
+    {% for car in cars %}
+      <a class="card" href="{{ url_for('car_detail', cid=car.id) }}">
+        <div class="media">
+          {% if car.image %}
+            <img src="{{ url_for('uploads', name=car.image) }}" alt="{{ car.make }} {{ car.model }}">
+          {% else %}
+            <div class="placeholder">{{ car.make[0] }}{{ car.model[0] }}</div>
+          {% endif %}
+        </div>
+        <div class="cardBody">
+          <span class="tag">{{ car.city }}, {{ car.state }}</span>
+          <h3>{{ car.year }} {{ car.make }} {{ car.model }}</h3>
+          <p>{{ car.color }} · {{ car.shoot_types }}</p>
+          <b>${{ car.price }}/hr</b>
+        </div>
+      </a>
+    {% else %}
+      <div class="empty">
+        <h3>No cars found.</h3>
+        <p>Try another city or search.</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
