@@ -2,22 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}PhotoWhips{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<header class="topbar">
-  <a class="brand" href="{{ url_for('home') }}"><span>PW</span>PhotoWhips</a>
-  <nav>
-    <a href="{{ url_for('cars') }}">Find Cars</a><a href="{{ url_for('photographers') }}">Photographers</a><a href="{{ url_for('jobs') }}">Jobs</a><a href="{{ url_for('landing',kind='movie') }}">Movie Shoots</a><a href="{{ url_for('landing',kind='style') }}">Style Shoots</a><a href="{{ url_for('landing',kind='pricing') }}">Pricing</a><a href="{{ url_for('blog') }}">Blog</a>
-  </nav>
-  <div class="account">{% if me %}<a href="{{ url_for('dashboard') }}">Dashboard</a><a class="pill" href="{{ url_for('profile',uid=me.id) }}">{{ me.name.split()[0] }}</a>{% else %}<a href="{{ url_for('login') }}">Log in</a><a class="pill acid" href="{{ url_for('signup') }}">Join</a>{% endif %}</div>
-  <button class="menu" id="menu">☰</button>
-</header>
-<div class="mobileNav" id="mobileNav"><a href="{{ url_for('cars') }}">Find Cars</a><a href="{{ url_for('photographers') }}">Photographers</a><a href="{{ url_for('jobs') }}">Jobs</a><a href="{{ url_for('blog') }}">Blog</a>{% if me %}<a href="{{ url_for('dashboard') }}">Dashboard</a><a href="{{ url_for('logout') }}">Log out</a>{% else %}<a href="{{ url_for('signup') }}">Join PhotoWhips</a>{% endif %}</div>
-{% with messages=get_flashed_messages() %}{% if messages %}<div class="flash">{{ messages[0] }}</div>{% endif %}{% endwith %}
-{% block content %}{% endblock %}
-<footer><div class="brand"><span>PW</span>PhotoWhips</div><p>Cars × photographers × culture.</p><div><a href="{{ url_for('landing',kind='owners') }}">For Owners</a> · <a href="{{ url_for('landing',kind='photographers') }}">For Photographers</a> · <a href="{{ url_for('landing',kind='contact') }}">Contact</a></div></footer>
-<script src="{{ url_for('static',filename='app.js') }}"></script>
-</body></html>
+  <!-- Shared desktop navigation. Authentication state controls the account actions. -->
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('home') }}">
+      <span>PW</span>
+      PhotoWhips
+    </a>
+
+    <nav aria-label="Primary navigation">
+      <a href="{{ url_for('cars') }}">Find Cars</a>
+      <a href="{{ url_for('photographers') }}">Photographers</a>
+      <a href="{{ url_for('jobs') }}">Jobs</a>
+      <a href="{{ url_for('landing', kind='movie') }}">Movie Shoots</a>
+      <a href="{{ url_for('landing', kind='style') }}">Style Shoots</a>
+      <a href="{{ url_for('landing', kind='pricing') }}">Pricing</a>
+      <a href="{{ url_for('blog') }}">Blog</a>
+    </nav>
+
+    <div class="account">
+      {% if me %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a class="pill" href="{{ url_for('profile', uid=me.id) }}">
+          {{ me.name.split()[0] }}
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Log in</a>
+        <a class="pill acid" href="{{ url_for('signup') }}">Join</a>
+      {% endif %}
+    </div>
+
+    <button class="menu" id="menu" type="button" aria-label="Toggle navigation">☰</button>
+  </header>
+
+  <!-- Collapsed navigation used by the responsive mobile layout. -->
+  <div class="mobileNav" id="mobileNav">
+    <a href="{{ url_for('cars') }}">Find Cars</a>
+    <a href="{{ url_for('photographers') }}">Photographers</a>
+    <a href="{{ url_for('jobs') }}">Jobs</a>
+    <a href="{{ url_for('blog') }}">Blog</a>
+
+    {% if me %}
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% else %}
+      <a href="{{ url_for('signup') }}">Join PhotoWhips</a>
+    {% endif %}
+  </div>
+
+  <!-- Flask flash messages are intentionally global so form feedback is visible on redirects. -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash">{{ messages[0] }}</div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="brand">
+      <span>PW</span>
+      PhotoWhips
+    </div>
+    <p>Cars × photographers × culture.</p>
+    <div>
+      <a href="{{ url_for('landing', kind='owners') }}">For Owners</a> ·
+      <a href="{{ url_for('landing', kind='photographers') }}">For Photographers</a> ·
+      <a href="{{ url_for('landing', kind='contact') }}">Contact</a>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
