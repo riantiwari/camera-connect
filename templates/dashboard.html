@@ -1,1 +1,128 @@
-{% extends 'base.html' %}{% block content %}<section class="pageHero compact"><p class="eyebrow">YOUR SPACE</p><h1>Hey, {{ me.name.split()[0] }}.</h1><p class="lede">Manage your profile, listings and collaborations from one place.</p></section><section class="wrap dashGrid"><aside class="dashNav"><a href="{{ url_for('profile',uid=me.id) }}">View profile</a><a href="{{ url_for('logout') }}">Log out</a>{% if me.is_admin %}<a href="{{ url_for('admin') }}">Admin</a>{% endif %}</aside><main><section class="dashPanel"><h2>Edit profile</h2><form class="form" method="post" action="{{ url_for('edit_profile') }}"><input name="name" value="{{ me.name }}"><input name="city" value="{{ me.city }}" placeholder="City"><input name="specialties" value="{{ me.specialties }}" placeholder="Specialties"><textarea name="bio" placeholder="Bio">{{ me.bio }}</textarea><button class="btn">Save profile</button></form></section>{% if me.role=='owner' %}<section class="dashPanel"><h2>Add a car</h2><form class="form formGrid" method="post" enctype="multipart/form-data" action="{{ url_for('add_car') }}"><input name="year" type="number" placeholder="Year" required><input name="make" placeholder="Make" required><input name="model" placeholder="Model" required><input name="color" placeholder="Color"><input name="city" placeholder="City" value="{{ me.city }}"><input name="state" placeholder="State"><input name="price" type="number" placeholder="Hourly rate"><input name="shoot_types" placeholder="Photography, Film, Style"><textarea name="description" placeholder="Tell creators about the car"></textarea><input name="image" type="file" accept="image/*"><button class="btn acid">List car</button></form></section><section class="dashPanel"><h2>Post a photography job</h2><form class="form formGrid" method="post" action="{{ url_for('add_job') }}"><input name="title" placeholder="Golden hour Porsche shoot" required><input name="city" value="{{ me.city }}" placeholder="City"><input name="date" placeholder="Date"><input name="budget" type="number" placeholder="Budget"><input name="category" placeholder="Automotive"><textarea name="description" placeholder="What do you need?"></textarea><button class="btn acid">Post job</button></form></section>{% else %}<section class="dashPanel"><h2>Add portfolio work</h2><form class="form" method="post" enctype="multipart/form-data" action="{{ url_for('add_portfolio') }}"><input type="file" name="image" accept="image/*" required><input name="caption" placeholder="Caption"><button class="btn acid">Add to portfolio</button></form></section>{% endif %}<section class="dashPanel"><h2>Shoot requests</h2>{% for r in requests %}<div class="requestRow"><div><b>{{ r.car.year }} {{ r.car.make }} {{ r.car.model }}</b><p>{{ r.photographer.name }} · {{ r.date or 'Date TBD' }} · <span class="status">{{ r.status }}</span></p><p>{{ r.message }}</p></div><div>{% if me.role=='owner' and r.status=='requested' %}<form method="post" action="{{ url_for('request_action',rid=r.id,action='accepted') }}"><button class="btn acid">Accept</button></form><form method="post" action="{{ url_for('request_action',rid=r.id,action='declined') }}"><button class="btn">Decline</button></form>{% elif r.status=='accepted' %}<form method="post" action="{{ url_for('request_action',rid=r.id,action='completed') }}"><button class="btn acid">Mark complete</button></form>{% endif %}</div></div>{% else %}<div class="empty">No requests yet.</div>{% endfor %}</section></main></section>{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}Dashboard · PhotoWhips{% endblock %}
+
+{% block content %}
+<section class="pageHero compact">
+  <p class="eyebrow">YOUR SPACE</p>
+  <h1>Hey, {{ me.name.split()[0] }}.</h1>
+  <p class="lede">Manage your profile, listings and collaborations from one place.</p>
+</section>
+
+<section class="wrap dashGrid">
+  <aside class="dashNav">
+    <a href="{{ url_for('profile', uid=me.id) }}">View profile</a>
+    <a href="{{ url_for('logout') }}">Log out</a>
+    {% if me.is_admin %}
+      <a href="{{ url_for('admin') }}">Admin</a>
+    {% endif %}
+  </aside>
+
+  <main>
+    <!-- Profile settings are shared by both marketplace roles. -->
+    <section class="dashPanel">
+      <h2>Edit profile</h2>
+      <form class="form" method="post" action="{{ url_for('edit_profile') }}">
+        <input name="name" value="{{ me.name }}" placeholder="Name">
+        <input name="city" value="{{ me.city }}" placeholder="City">
+        <input name="specialties" value="{{ me.specialties }}" placeholder="Specialties">
+        <textarea name="bio" placeholder="Bio">{{ me.bio }}</textarea>
+        <button class="btn" type="submit">Save profile</button>
+      </form>
+    </section>
+
+    {% if me.role == 'owner' %}
+      <!-- Owners can create the supply side of the marketplace. -->
+      <section class="dashPanel">
+        <h2>Add a car</h2>
+        <form
+          class="form formGrid"
+          method="post"
+          enctype="multipart/form-data"
+          action="{{ url_for('add_car') }}"
+        >
+          <input name="year" type="number" placeholder="Year" required>
+          <input name="make" placeholder="Make" required>
+          <input name="model" placeholder="Model" required>
+          <input name="color" placeholder="Color">
+          <input name="city" placeholder="City" value="{{ me.city }}">
+          <input name="state" placeholder="State">
+          <input name="price" type="number" placeholder="Hourly rate">
+          <input name="shoot_types" placeholder="Photography, Film, Style">
+          <textarea name="description" placeholder="Tell creators about the car"></textarea>
+          <input name="image" type="file" accept="image/*">
+          <button class="btn acid" type="submit">List car</button>
+        </form>
+      </section>
+
+      <section class="dashPanel">
+        <h2>Post a photography job</h2>
+        <form class="form formGrid" method="post" action="{{ url_for('add_job') }}">
+          <input name="title" placeholder="Golden hour Porsche shoot" required>
+          <input name="city" value="{{ me.city }}" placeholder="City">
+          <input name="date" placeholder="Date">
+          <input name="budget" type="number" placeholder="Budget">
+          <input name="category" placeholder="Automotive">
+          <textarea name="description" placeholder="What do you need?"></textarea>
+          <button class="btn acid" type="submit">Post job</button>
+        </form>
+      </section>
+    {% else %}
+      <!-- Photographers build a visual portfolio instead of a garage. -->
+      <section class="dashPanel">
+        <h2>Add portfolio work</h2>
+        <form
+          class="form"
+          method="post"
+          enctype="multipart/form-data"
+          action="{{ url_for('add_portfolio') }}"
+        >
+          <input type="file" name="image" accept="image/*" required>
+          <input name="caption" placeholder="Caption">
+          <button class="btn acid" type="submit">Add to portfolio</button>
+        </form>
+      </section>
+    {% endif %}
+
+    <!-- Both parties can follow the current state of a shoot request. -->
+    <section class="dashPanel">
+      <h2>Shoot requests</h2>
+
+      {% for shoot_request in requests %}
+        <div class="requestRow">
+          <div>
+            <b>
+              {{ shoot_request.car.year }}
+              {{ shoot_request.car.make }}
+              {{ shoot_request.car.model }}
+            </b>
+            <p>
+              {{ shoot_request.photographer.name }} ·
+              {{ shoot_request.date or 'Date TBD' }} ·
+              <span class="status">{{ shoot_request.status }}</span>
+            </p>
+            <p>{{ shoot_request.message }}</p>
+          </div>
+
+          <div>
+            {% if me.role == 'owner' and shoot_request.status == 'requested' %}
+              <form method="post" action="{{ url_for('request_action', rid=shoot_request.id, action='accepted') }}">
+                <button class="btn acid" type="submit">Accept</button>
+              </form>
+              <form method="post" action="{{ url_for('request_action', rid=shoot_request.id, action='declined') }}">
+                <button class="btn" type="submit">Decline</button>
+              </form>
+            {% elif shoot_request.status == 'accepted' %}
+              <form method="post" action="{{ url_for('request_action', rid=shoot_request.id, action='completed') }}">
+                <button class="btn acid" type="submit">Mark complete</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <div class="empty">No requests yet.</div>
+      {% endfor %}
+    </section>
+  </main>
+</section>
+{% endblock %}
