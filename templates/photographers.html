@@ -1,1 +1,40 @@
-{% extends 'base.html' %}{% block content %}<section class="pageHero"><p class="eyebrow">CREATORS</p><h1>Find photographers who get the shot.</h1><p class="lede">Automotive photographers ranked with real reviews and community activity.</p></section><section class="wrap"><div class="peopleGrid">{% for u in users %}<a class="person large" href="{{ url_for('profile',uid=u.id) }}"><div class="avatar">{{ ''.join(x[0] for x in u.name.split()[:2]) }}</div><div><span class="tag">{{ u.city }}</span><h3>{{ u.name }}</h3><p>{{ u.bio }}</p><p>{{ u.specialties }}</p><b>{{ score(u.id)[1] }} ★ · {{ score(u.id)[2] }} reviews · Score {{ score(u.id)[0] }}</b></div></a>{% endfor %}</div></section>{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}Photographers · PhotoWhips{% endblock %}
+
+{% block content %}
+<!-- Public creator directory for owners and production visitors. -->
+<section class="pageHero">
+  <p class="eyebrow">CREATORS</p>
+  <h1>Find photographers who get the shot.</h1>
+  <p class="lede">
+    Automotive photographers ranked with real reviews and community activity.
+  </p>
+</section>
+
+<section class="wrap">
+  <div class="peopleGrid">
+    {% for user in users %}
+      <a class="person large" href="{{ url_for('profile', uid=user.id) }}">
+        <div class="avatar">{{ user.name[0] }}</div>
+        <div>
+          <span class="tag">{{ user.city }}</span>
+          <h3>{{ user.name }}</h3>
+          <p>{{ user.bio }}</p>
+          <p>{{ user.specialties }}</p>
+          <b>
+            {{ score(user.id)[1] }} ★ ·
+            {{ score(user.id)[2] }} reviews ·
+            Score {{ score(user.id)[0] }}
+          </b>
+        </div>
+      </a>
+    {% else %}
+      <div class="empty">
+        <h3>No photographers yet.</h3>
+        <p>The first creator profiles will appear here.</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
