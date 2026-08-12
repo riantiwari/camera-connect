@@ -1,0 +1,1 @@
+const menu=document.querySelector('#menu');const nav=document.querySelector('#mobileNav');if(menu&&nav){menu.addEventListener('click',()=>nav.classList.toggle('open'));}document.querySelectorAll('input[type=file]').forEach(input=>input.addEventListener('change',()=>{if(input.files[0]) input.dataset.selected=input.files[0].name;}));
